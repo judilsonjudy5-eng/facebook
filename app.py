@@ -7,6 +7,18 @@ app = Flask(__name__)
 def helo():
   return "Webhook On"
 
+token_fb = "EABD9vGanoGYBS046QAVTYPgu6XXExEboAgIXfreFqrZCLbyqZAlGEbvZCLZCgasklrlstyLGxySIkaWdASr5omFDvzdRMXFiRjB4xmucp9vZAwitRTjaCiskNjfyZBeKSqUzDEchX9KlZAQBgZB9fvZCPcoW8KCrDZCKJROXSpNwOMUzvBrSJG0j1Qo9jd7wWRX0ts3sPblwZDZD"
+META_API_VERSION = "v25.0"
+
+def enviar_facebook(recipient_id: str, texto: str, token_fb: str, META_API_VERSION: str) -> bool:
+    if not META_PAGE_TOKEN:
+        logger.info(f"[facebook] (sem token) → {recipient_id}: {texto[:80]}")
+        return True
+    
+    # Montagem de URL ultra-segura com barras explícitas
+    url = f"https://graph.facebook.com/{META_API_VERSION}/me/messages"
+    return _post(url, {"recipient": {"id": recipient_id}, "message": {"text": texto}, "messaging_type": "RESPONSE"}, token_fb)
+
 
 @app.route("/webhook", methods=["GET", "POST"])
 def webhook():
@@ -45,6 +57,7 @@ def webhook():
                 continue
               message_text = msg.get("text")
               print(f"Texto da Mensagem: {message_text}")
+              enviar_facebook(send_id, "Tas bom", token_fb, META_API_VERSION)
 
       return "EVENT_RECEIVED", 200
 
