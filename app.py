@@ -1,4 +1,7 @@
 from flask import Flask, request, jsonify
+import os
+import logging
+import requests
 
 app = Flask(__name__)
 
@@ -10,8 +13,25 @@ def helo():
 token_fb = "EABD9vGanoGYBS9tbZBO5yFQF5IiF3rOWR0SzKMuxIuwoeb1nbN9Kz4O09DY25XbdUoKc77mzsb4s9JAmm3XSyuL1U6aLEZBiqMgvNBsKxJW6ltrieTs9keQp20YRyravNWNktkUTokC0PEIGPEZBRpifs6wP5xbNTuh3BvXx7ebRmBEZC19IhSED16AXZAIRvqgl9WwZDZD"
 META_API_VERSION = "v25.0"
 
+def _post(url: str, payload: dict, token: str) -> bool:
+    try:
+        r = requests.post(
+            url,
+            params={"access_token": token},
+            json=payload,
+            timeout=10,
+        )
+        if r.status_code != 200:
+            logger.error(f"[facebook] erro {r.status_code}: {r.text}")
+            return False
+        return True
+    except requests.RequestException as e:
+        logger.error(f"[facebook] falha de rede: {e}")
+        return False
+
+
 def enviar_facebook(recipient_id: str, texto: str, token_fb: str, META_API_VERSION: str) -> bool:
-    if not META_PAGE_TOKEN:
+    if not token_fb:
         logger.info(f"[facebook] (sem token) → {recipient_id}: {texto[:80]}")
         return True
     
@@ -57,7 +77,7 @@ def webhook():
                 continue
               message_text = msg.get("text")
               print(f"Texto da Mensagem: {message_text}")
-              enviar_facebook(send_id, "Tas bom", token_fb, META_API_VERSION)
+              enviar_facebook(sender_id, "Tas bom", token_fb, META_API_VERSION)
 
       return "EVENT_RECEIVED", 200
 
