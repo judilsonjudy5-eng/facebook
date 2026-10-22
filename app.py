@@ -7,7 +7,7 @@ app = Flask(__name__)
 def helo():
   return "Webhook On"
 
-token_fb = "EABD9vGanoGYBS046QAVTYPgu6XXExEboAgIXfreFqrZCLbyqZAlGEbvZCLZCgasklrlstyLGxySIkaWdASr5omFDvzdRMXFiRjB4xmucp9vZAwitRTjaCiskNjfyZBeKSqUzDEchX9KlZAQBgZB9fvZCPcoW8KCrDZCKJROXSpNwOMUzvBrSJG0j1Qo9jd7wWRX0ts3sPblwZDZD"
+token_fb = "EABD9vGanoGYBS9tbZBO5yFQF5IiF3rOWR0SzKMuxIuwoeb1nbN9Kz4O09DY25XbdUoKc77mzsb4s9JAmm3XSyuL1U6aLEZBiqMgvNBsKxJW6ltrieTs9keQp20YRyravNWNktkUTokC0PEIGPEZBRpifs6wP5xbNTuh3BvXx7ebRmBEZC19IhSED16AXZAIRvqgl9WwZDZD"
 META_API_VERSION = "v25.0"
 
 def enviar_facebook(recipient_id: str, texto: str, token_fb: str, META_API_VERSION: str) -> bool:
