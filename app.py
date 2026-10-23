@@ -95,7 +95,7 @@ def webhook():
                 continue
               message_text = msg.get("text")
               print(f"Texto da Mensagem: {message_text}")
-              enviar_facebook(sender_id, "Tas bom", token_fb, META_API_VERSION)
+              enviar_facebook(sender_id, "Tas bom")
 
       return "EVENT_RECEIVED", 200
 
@@ -146,7 +146,7 @@ def instagram_webhook():
                         texto = f"{texto} \ncanal de contato: *instagram*"
                         #if sender_igsid and texto:
                         logger.info(f"Instagram msg de {sender_igsid}: {texto}")
-                        enviar_instagram(sender_igsid, "Tudo bem?", META_IG_TOKEN, META_API_VERSION)
+                        enviar_instagram(sender_igsid, "Tudo bem?")
 
             return "EVENT_RECEIVED", 200
         except Exception as e:
