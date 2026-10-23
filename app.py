@@ -11,8 +11,6 @@ logger = logging.getLogger(__name__)
 PAGE_TOKEN = "EABD9vGanoGYBS9tbZBO5yFQF5IiF3rOWR0SzKMuxIuwoeb1nbN9Kz4O09DY25XbdUoKc77mzsb4s9JAmm3XSyuL1U6aLEZBiqMgvNBsKxJW6ltrieTs9keQp20YRyravNWNktkUTokC0PEIGPEZBRpifs6wP5xbNTuh3BvXx7ebRmBEZC19IhSED16AXZAIRvqgl9WwZDZD"
 #META_IG_TOKEN = os.environ.get("META_IG_TOKEN", "")
 META_IG_TOKEN = "IGAAYKuDjjophBZAFpUY3VZAY3BMUUZAhZATFLRWtkS0ZA2dkU5ZADNGUGl3Y2VFeVdSS1Nrc2pWTjdNX3p1TnlsRzZANRXhlRnd4UXhkRmZA2LVIwZAEJTUEY4QW0zbEh0N0RjbkJNcDJySXZAKUVJJWjM4bENmMVBUSEh5REpWMG5Ub1FKVQZDZD"
-#INSTAGRAM_BUSINESS_ID = os.environ.get("INSTAGRAM_BUSINESS_ID", "me")
-INSTAGRAM_BUSINESS_ID = "1700636204966552"
 META_API_VERSION = "v25.0"
 
 
@@ -53,7 +51,7 @@ def enviar_instagram(recipient_id: str, texto: str) -> bool:
     if not META_IG_TOKEN:
         logger.info(f"[instagram] (sem token) → {recipient_id}: {texto[:80]}")
         return True
-    url = f"https://graph.instagram.com/{META_API_VERSION}/{INSTAGRAM_BUSINESS_ID}/messages"
+    url = f"https://graph.instagram.com/{META_API_VERSION}/me/messages"
     payload = {"recipient": {"id": recipient_id}, "messaging_type": "RESPONSE", "message": {"text": texto}}
     return _post(url, payload, META_IG_TOKEN)
 
