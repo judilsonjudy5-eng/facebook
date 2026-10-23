@@ -7,17 +7,21 @@ import requests
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
-app = Flask(__name__)
+#PAGE_TOKEN = os.environ.get("PAGE_TOKEN", "")
+PAGE_TOKEN = "EABD9vGanoGYBS9tbZBO5yFQF5IiF3rOWR0SzKMuxIuwoeb1nbN9Kz4O09DY25XbdUoKc77mzsb4s9JAmm3XSyuL1U6aLEZBiqMgvNBsKxJW6ltrieTs9keQp20YRyravNWNktkUTokC0PEIGPEZBRpifs6wP5xbNTuh3BvXx7ebRmBEZC19IhSED16AXZAIRvqgl9WwZDZD"
+#META_IG_TOKEN = os.environ.get("META_IG_TOKEN", "")
+META_IG_TOKEN = "IGAAYKuDjjophBZAFpXSS1Rc2ZAMVzU4TzNBXzc0aExuLTU3ZAG5RVm5aUnVsNXpfazM0YmJGSmNHX29FRzZAjZAXR4REo1UTlteV93U2dxb0hHcnJaRjJhZAlZABbUVfeTI4UVNuNlVGQ1pGY2F0VUxtVjJ4MnQwblNMWWVaMUE0dnp6dwZDZD"
+#INSTAGRAM_BUSINESS_ID = os.environ.get("INSTAGRAM_BUSINESS_ID", "me")
+INSTAGRAM_BUSINESS_ID = "1700636204966552"
+META_API_VERSION = "v25.0"
 
+
+app = Flask(__name__)
 
 
 @app.route("/")
 def helo():
   return "Webhook On"
-
-token_fb = "EABD9vGanoGYBS9tbZBO5yFQF5IiF3rOWR0SzKMuxIuwoeb1nbN9Kz4O09DY25XbdUoKc77mzsb4s9JAmm3XSyuL1U6aLEZBiqMgvNBsKxJW6ltrieTs9keQp20YRyravNWNktkUTokC0PEIGPEZBRpifs6wP5xbNTuh3BvXx7ebRmBEZC19IhSED16AXZAIRvqgl9WwZDZD"
-META_API_VERSION = "v25.0"
-META_IG_TOKEN = ""
 
 def _post(url: str, payload: dict, token: str) -> bool:
     try:
@@ -36,29 +40,22 @@ def _post(url: str, payload: dict, token: str) -> bool:
         return False
 
 
-def enviar_facebook(recipient_id: str, texto: str, token_fb: str, META_API_VERSION: str) -> bool:
-    if not token_fb:
+def enviar_facebook(recipient_id: str, texto: str) -> bool:
+    if not PAGE_TOKEN:
         logger.info(f"[facebook] (sem token) → {recipient_id}: {texto[:80]}")
         return True
-    
-    # Montagem de URL ultra-segura com barras explícitas
     url = f"https://graph.facebook.com/{META_API_VERSION}/me/messages"
-    return _post(url, {"recipient": {"id": recipient_id}, "message": {"text": texto}, "messaging_type": "RESPONSE"}, token_fb)
+    payload = {"recipient": {"id": recipient_id}, "message": {"text": texto}, "messaging_type": "RESPONSE"}
+    return _post(url, payload, PAGE_TOKEN)
 
 
-def enviar_instagram(recipient_id: str, texto: str, token_fb: str, META_API_VERSION: str) -> bool:
-    token = META_IG_TOKEN
-    if not token:
+def enviar_instagram(recipient_id: str, texto: str) -> bool:
+    if not META_IG_TOKEN:
         logger.info(f"[instagram] (sem token) → {recipient_id}: {texto[:80]}")
         return True
-
-    # Token IGAAR é Instagram User Access Token — requer graph.instagram.com, não graph.facebook.com
     url = f"https://graph.instagram.com/{META_API_VERSION}/{INSTAGRAM_BUSINESS_ID}/messages"
-    return _post(url, {
-        "recipient": {"id": recipient_id},
-        "messaging_type": "RESPONSE",
-        "message": {"text": texto},
-    }, token_fb)
+    payload = {"recipient": {"id": recipient_id}, "messaging_type": "RESPONSE", "message": {"text": texto}}
+    return _post(url, payload, META_IG_TOKEN)
 
 
 @app.route("/webhook", methods=["GET", "POST"])
@@ -142,10 +139,6 @@ def instagram_webhook():
                         if msg.get("is_echo"):
                             continue
 
-                        mid = msg.get("mid", "")
-                        if mid and not _adquirir_lock(f"webhook:ig:{mid}", 120):
-                            logger.info(f"Webhook IG duplicado ignorado: {mid}")
-                            continue
 
                         texto = msg.get("text")
                         if not sender_igsid or not texto:
@@ -153,7 +146,6 @@ def instagram_webhook():
                         texto = f"{texto} \ncanal de contato: *instagram*"
                         #if sender_igsid and texto:
                         logger.info(f"Instagram msg de {sender_igsid}: {texto}")
-                        #_processar_e_responder("instagram", sender_igsid, texto)
                         enviar_instagram(sender_igsid, "Tudo bem?", META_IG_TOKEN, META_API_VERSION)
 
             return "EVENT_RECEIVED", 200
