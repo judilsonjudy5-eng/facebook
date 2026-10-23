@@ -30,11 +30,11 @@ def _post(url: str, payload: dict, token: str) -> bool:
             timeout=10,
         )
         if r.status_code != 200:
-            logger.error(f"[facebook] erro {r.status_code}: {r.text}")
+            logger.error(f"[meta] erro {r.status_code}: {r.text}")
             return False
         return True
     except requests.RequestException as e:
-        logger.error(f"[facebook] falha de rede: {e}")
+        logger.error(f"[meta] erro {r.status_code}: {r.text}")
         return False
 
 
