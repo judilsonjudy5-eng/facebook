@@ -202,7 +202,7 @@ def instagram_webhook():
                     continue
 
                 logger.info(f"Instagram msg de {sender_igsid}: {msg['text']}")
-                enviar_instagram(sender_igsid, "Tudo bem?")
+                #enviar_instagram(sender_igsid, "Tudo bem?")
     except Exception as e:
         logger.error(f"Erro ao processar POST do Instagram: {e}")
 
